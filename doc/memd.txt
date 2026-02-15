@@ -1,0 +1,190 @@
+*memd.txt*  Preview Mermaid diagrams in Neovim
+
+==============================================================================
+CONTENTS                                                      *memd-contents*
+
+  1. Introduction ................................ |memd-introduction|
+  2. Requirements ................................ |memd-requirements|
+  3. Installation ................................ |memd-installation|
+  4. Configuration ............................... |memd-configuration|
+  5. Usage ....................................... |memd-usage|
+  6. Commands .................................... |memd-commands|
+  7. API ......................................... |memd-api|
+  8. License ..................................... |memd-license|
+
+==============================================================================
+INTRODUCTION                                              *memd-introduction*
+
+memd.nvim is a Neovim plugin that previews Mermaid diagrams in Markdown
+files as ASCII art using the memd-cli tool.
+
+Features:
+  - Preview Mermaid diagrams as ASCII art
+  - Multiple display modes (floating window, split window)
+  - Auto-preview on save or cursor hold
+  - Caching for better performance
+  - Visual selection preview
+
+==============================================================================
+REQUIREMENTS                                              *memd-requirements*
+
+- Neovim >= 0.9.0
+- memd-cli installed globally (npm install -g memd-cli)
+
+==============================================================================
+INSTALLATION                                              *memd-installation*
+
+Using lazy.nvim:
+>lua
+  {
+    'username/memd.nvim',
+    ft = 'markdown',
+    config = function()
+      require('memd').setup()
+    end,
+  }
+<
+
+==============================================================================
+CONFIGURATION                                            *memd-configuration*
+
+Default configuration:
+>lua
+  require('memd').setup({
+    display_mode = 'float',
+    auto_preview = false,
+    width = nil,
+    use_ascii = false,
+    float_opts = {
+      relative = 'editor',
+      border = 'rounded',
+    },
+    split_opts = {
+      position = 'right',
+      size = 80,
+    },
+    cache = {
+      enabled = true,
+    },
+    debounce_ms = 500,
+    keymaps = {
+      preview = '<leader>mp',
+      toggle = '<leader>mt',
+      clear_cache = '<leader>mc',
+    },
+  })
+<
+
+Options:
+
+display_mode                                      *memd-config-display_mode*
+  Type: string
+  Default: 'float'
+  Display mode for preview: 'float' or 'split'
+
+auto_preview                                      *memd-config-auto_preview*
+  Type: boolean
+  Default: false
+  Enable automatic preview on save or cursor hold
+
+width                                                    *memd-config-width*
+  Type: number|nil
+  Default: nil
+  Terminal width override (nil = auto-detect)
+
+use_ascii                                            *memd-config-use_ascii*
+  Type: boolean
+  Default: false
+  Use pure ASCII mode for diagrams
+
+keymaps                                                *memd-config-keymaps*
+  Type: table|boolean
+  Default: { preview = '<leader>mp', ... }
+  Keymap configuration (set to false to disable)
+
+==============================================================================
+USAGE                                                            *memd-usage*
+
+Basic workflow:
+  1. Open a markdown file with Mermaid diagrams
+  2. Use |:MemdPreview| to preview the current buffer
+  3. Press 'q' or <Esc> to close the floating preview
+  4. Use |:MemdToggle| to enable auto-preview mode
+
+==============================================================================
+COMMANDS                                                      *memd-commands*
+
+:MemdPreview                                                  *:MemdPreview*
+  Preview the current buffer. Renders all Mermaid diagrams in the markdown
+  file and displays them in the configured display mode.
+
+:MemdPreviewSelection                                *:MemdPreviewSelection*
+  Preview the visual selection. Select text in visual mode and run this
+  command to preview only the selected content.
+
+:MemdToggle                                                    *:MemdToggle*
+  Toggle auto-preview mode. When enabled, previews are automatically
+  updated on file save or cursor hold.
+
+:MemdClose                                                      *:MemdClose*
+  Close all preview windows.
+
+:MemdClearCache                                            *:MemdClearCache*
+  Clear the render cache.
+
+:MemdCacheStats                                            *:MemdCacheStats*
+  Show cache statistics.
+
+==============================================================================
+API                                                                *memd-api*
+
+memd.setup({opts})                                            *memd.setup()*
+  Setup the plugin with configuration options.
+
+  Parameters:
+    {opts} (table|nil) Configuration options
+
+  Example:
+>lua
+    require('memd').setup({
+      display_mode = 'split',
+      auto_preview = true,
+    })
+<
+
+memd.preview({opts})                                        *memd.preview()*
+  Preview the current buffer.
+
+  Parameters:
+    {opts} (table|nil) Preview options
+      - display_mode: Override display mode
+      - width: Override terminal width
+      - use_ascii: Override ASCII mode
+      - no_cache: Bypass cache
+
+  Example:
+>lua
+    require('memd').preview({ use_ascii = true })
+<
+
+memd.preview_selection({opts})                    *memd.preview_selection()*
+  Preview the visual selection.
+
+  Parameters:
+    {opts} (table|nil) Preview options (same as preview)
+
+memd.toggle_auto_preview()                      *memd.toggle_auto_preview()*
+  Toggle auto-preview mode.
+
+memd.clear_cache()                                      *memd.clear_cache()*
+  Clear the render cache.
+
+memd.close()                                                  *memd.close()*
+  Close all preview windows.
+
+==============================================================================
+LICENSE                                                        *memd-license*
+
+MIT License
+
+vim:tw=78:ts=8:ft=help:norl:
