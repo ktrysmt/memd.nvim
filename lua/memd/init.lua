@@ -10,6 +10,8 @@ local terminal_state = {
   job_id = nil,
   source_file = nil,
   fs_watcher = nil,
+  saved_width = nil,
+  saved_height = nil,
 }
 
 -- Open terminal with memd-cli
@@ -39,6 +41,7 @@ function M.open_terminal(opts)
   -- Create buffer and set options
   local bufnr = vim.api.nvim_create_buf(false, true)
   vim.bo[bufnr].bufhidden = 'wipe'
+  vim.bo[bufnr].filetype = 'memd'
   vim.api.nvim_buf_set_name(bufnr, 'memd://' .. vim.fn.fnamemodify(filepath, ':t'))
 
   local win
@@ -98,6 +101,12 @@ function M.open_terminal(opts)
     cwd = file_dir
   })
 
+  -- Restore saved window size if available
+  if terminal_state.saved_width and terminal_state.saved_height then
+    vim.api.nvim_win_set_width(win, terminal_state.saved_width)
+    vim.api.nvim_win_set_height(win, terminal_state.saved_height)
+  end
+
   -- Setup auto-reload based on method
   local auto_reload_method = config.options.auto_reload_method or 'fs_watcher'
   
@@ -122,6 +131,37 @@ function M.open_terminal(opts)
     terminal_state.fs_watcher = watcher
   end
   -- Note: autocmd method is set up in M.setup() if auto_reload_method == 'autocmd'
+
+  -- Setup WinResized autocmd to track manual resizing
+  local augroup = vim.api.nvim_create_augroup('Memd_' .. bufnr, { clear = true })
+  vim.api.nvim_create_autocmd('WinResized', {
+    group = augroup,
+    callback = function()
+      -- Check if the resized window is our memd terminal window
+      if terminal_state.win and vim.api.nvim_win_is_valid(terminal_state.win) then
+        local buf = vim.api.nvim_win_get_buf(terminal_state.win)
+        if buf == bufnr then
+          terminal_state.saved_width = vim.api.nvim_win_get_width(terminal_state.win)
+          terminal_state.saved_height = vim.api.nvim_win_get_height(terminal_state.win)
+        end
+      end
+    end
+  })
+
+  -- Cleanup autocmd when buffer is deleted
+  vim.api.nvim_create_autocmd('BufWipeout', {
+    buffer = bufnr,
+    callback = function()
+      pcall(vim.api.nvim_del_augroup_by_name, 'Memd_' .. bufnr)
+    end,
+    once = true,
+  })
+
+  -- Save initial window size if not already saved
+  if not terminal_state.saved_width then
+    terminal_state.saved_width = vim.api.nvim_win_get_width(win)
+    terminal_state.saved_height = vim.api.nvim_win_get_height(win)
+  end
 
   -- Go back to previous window
   vim.cmd('wincmd p')

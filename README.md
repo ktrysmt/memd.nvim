@@ -10,6 +10,7 @@ A Neovim plugin wrapper for [memd-cli](https://github.com/ktrysmt/memd) - previe
 - Quick terminal preview of Mermaid diagrams using memd-cli
 - Multiple display modes: split window or floating window
 - Auto-reload on file changes (fs_watcher or autocmd)
+- Preserves window size across auto-reloads and reopens
 - Customizable split window positioning and floating window options
 - Simple keymaps for toggling terminal preview
 - Lightweight wrapper around memd-cli
@@ -180,6 +181,15 @@ vim.keymap.set('n', '<leader>mo', require('memd').open_terminal, { desc = 'Memd:
 -- Close preview
 vim.keymap.set('n', '<leader>mc', require('memd').close_terminal, { desc = 'Memd: Close preview' })
 ```
+
+### Window Behavior
+
+The plugin automatically preserves your window size when you:
+- Manually resize the preview window
+- Save the file and trigger auto-reload
+- Close and reopen the preview
+
+This ensures a consistent viewing experience without having to resize the window every time.
 
 ## Troubleshooting
 
