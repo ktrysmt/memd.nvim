@@ -2,60 +2,49 @@
 -- Place this in your ~/.config/nvim/lua/plugins/memd.lua
 
 return {
-  'username/memd.nvim',
+  'ktrysmt/memd.nvim',
 
   -- Lazy load on markdown files
   ft = 'markdown',
 
   -- Or lazy load on commands
-  -- cmd = { 'MemdPreview', 'MemdToggle' },
+  -- cmd = { 'Memd', 'MemdToggle', 'MemdClose' },
 
   -- Or lazy load on keymaps
   -- keys = {
-  --   { '<leader>mp', '<cmd>MemdPreview<cr>', desc = 'Memd: Preview' },
-  --   { '<leader>mt', '<cmd>MemdToggle<cr>', desc = 'Memd: Toggle auto-preview' },
+  --   { '<leader>mt', '<cmd>MemdToggle<cr>', desc = 'Memd: Toggle terminal' },
   -- },
 
   config = function()
     require('memd').setup({
-      -- Display mode: 'float' or 'split'
-      display_mode = 'float',
+      -- Display mode: 'split' or 'floating'
+      display_mode = 'split',
 
-      -- Automatically preview on save
-      auto_preview = false,
+      -- Terminal split command (used when display_mode = 'split')
+      -- Options: 'rightbelow vnew', 'leftabove vnew', 'botright split', 'topleft split', 'tabnew'
+      terminal_split = 'rightbelow vnew',
 
-      -- Terminal width (nil = auto)
-      width = nil,
-
-      -- Use ASCII-only characters
-      use_ascii = false,
-
-      -- Floating window options
-      float_opts = {
+      -- Floating window options (used when display_mode = 'floating')
+      floating_opts = {
         relative = 'editor',
-        border = 'rounded',
+        width = 0.8,          -- 80% of editor width
+        height = 0.8,         -- 80% of editor height
+        row = 0.1,            -- 10% from top
+        col = 0.1,            -- 10% from left
+        border = 'rounded',   -- 'none', 'single', 'double', 'rounded', 'solid', 'shadow'
+        title = ' Memd Preview ',
+        title_pos = 'center', -- 'left', 'center', 'right'
       },
 
-      -- Split window options
-      split_opts = {
-        position = 'right',  -- 'right', 'left', 'above', 'below'
-        size = 80,
-      },
-
-      -- Enable caching
-      cache = {
-        enabled = true,
-      },
-
-      -- Debounce time for auto-preview (ms)
-      debounce_ms = 500,
-
-      -- Keymaps
-      keymaps = {
-        preview = '<leader>mp',
-        toggle = '<leader>mt',
-        clear_cache = '<leader>mc',
-      },
+      -- Auto-reload method: 'fs_watcher' or 'autocmd'
+      -- fs_watcher: detects file changes from any editor (default)
+      -- autocmd: only detects saves from within Neovim (BufWritePost)
+      auto_reload_method = 'fs_watcher',
     })
+
+    -- Set up keymaps (optional)
+    vim.keymap.set('n', '<leader>mt', require('memd').toggle, { desc = 'Memd: Toggle preview' })
+    vim.keymap.set('n', '<leader>mo', require('memd').open_terminal, { desc = 'Memd: Open preview' })
+    vim.keymap.set('n', '<leader>mc', require('memd').close_terminal, { desc = 'Memd: Close preview' })
   end,
 }

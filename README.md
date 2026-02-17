@@ -1,104 +1,160 @@
 # memd.nvim
 
-A Neovim plugin for previewing Mermaid diagrams in Markdown files using [memd-cli](https://github.com/ktrysmt/memd).
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Neovim](https://img.shields.io/badge/NeoVim-%E2%89%A5%200.9.0-green.svg)
+
+A Neovim plugin wrapper for [memd-cli](https://github.com/ktrysmt/memd) - preview Mermaid diagrams in Markdown files directly in your terminal.
 
 ## Features
 
-- 🎨 Preview Mermaid diagrams as ASCII art in Neovim
-- 🪟 Multiple display modes: floating window or split window
-- ⚡ Caching for better performance
-- 🔄 Auto-preview on save or cursor hold
-- 📝 Visual selection preview support
-- ⌨️ Customizable keymaps
+- Quick terminal preview of Mermaid diagrams using memd-cli
+- Multiple display modes: split window or floating window
+- Auto-reload on file changes (fs_watcher or autocmd)
+- Customizable split window positioning and floating window options
+- Simple keymaps for toggling terminal preview
+- Lightweight wrapper around memd-cli
 
 ## Requirements
 
 - Neovim >= 0.9.0
-- [memd-cli](https://github.com/ktrysmt/memd) installed globally
+- **[memd-cli](https://github.com/ktrysmt/memd)** - Required CLI tool for rendering Mermaid diagrams
+
+### Installing memd-cli
+
+**This plugin requires memd-cli to be installed first:**
 
 ```bash
 npm install -g memd-cli
 ```
 
+Verify installation:
+```bash
+which memd
+memd --version
+```
+
+If you encounter permission issues with global npm install:
+```bash
+# Install to user directory
+npm install -g --prefix ~/.local memd-cli
+
+# Add to PATH (add to ~/.bashrc or ~/.zshrc)
+export PATH="$HOME/.local/bin:$PATH"
+```
+
 ## Installation
 
-### Using [lazy.nvim](https://github.com/folke/lazy.nvim)
+### Setting up
 
+* Using [lazy.nvim](https://github.com/folke/lazy.nvim)
+
+**Minimal:**
 ```lua
 {
-  'username/memd.nvim',
-  ft = 'markdown',  -- Lazy load on markdown files
+  'ktrysmt/memd.nvim',
+  ft = 'markdown',
   config = function()
-    require('memd').setup({
-      -- Default configuration
-      display_mode = 'float',  -- 'float' or 'split'
-      auto_preview = false,
-      keymaps = {
-        preview = '<leader>mp',
-        toggle = '<leader>mt',
-        clear_cache = '<leader>mc',
-      },
-    })
+    require('memd').setup()
   end,
 }
 ```
 
-### Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
-
+**Default full configuration:**
 ```lua
-use {
-  'username/memd.nvim',
+{
+  'ktrysmt/memd.nvim',
   ft = 'markdown',
   config = function()
-    require('memd').setup()
-  end
+    require('memd').setup({
+      -- Display mode: 'split' or 'floating'
+      display_mode = 'split',
+
+      -- Terminal split command (used when display_mode = 'split')
+      terminal_split = 'rightbelow vnew',
+
+      -- Floating window options (used when display_mode = 'floating')
+      floating_opts = {
+        relative = 'editor',
+        width = 0.8,          -- 80% of editor width
+        height = 0.8,         -- 80% of editor height
+        row = 0.1,            -- 10% from top
+        col = 0.1,            -- 10% from left
+        border = 'rounded',   -- 'none', 'single', 'double', 'rounded', 'solid', 'shadow'
+        title = ' Memd Preview ',
+        title_pos = 'center', -- 'left', 'center', 'right'
+      },
+
+      -- Auto-reload method: 'fs_watcher' or 'autocmd'
+      -- fs_watcher: detects file changes from any editor (default)
+      -- autocmd: only detects saves from within Neovim (BufWritePost)
+      auto_reload_method = 'fs_watcher',
+    })
+
+    -- Set up keymaps (optional)
+    vim.keymap.set('n', '<leader>mt', require('memd').toggle, { desc = 'Memd: Toggle preview' })
+  end,
 }
 ```
 
 ## Configuration
 
-Default configuration:
+### Display Modes
+
+**Split Mode (default):**
+```lua
+require('memd').setup({
+  display_mode = 'split',
+  terminal_split = 'rightbelow vnew',  -- Customize split command
+})
+```
+
+**Floating Window Mode:**
+```lua
+require('memd').setup({
+  display_mode = 'floating',
+  floating_opts = {
+    width = 0.9,     -- 90% of screen width
+    height = 0.9,    -- 90% of screen height
+    border = 'double',
+  },
+})
+```
+
+### Terminal Split Options
+
+When using `display_mode = 'split'`, customize how the terminal window opens:
+
+| Option | Description |
+|--------|-------------|
+| `'rightbelow vnew'` | Open on the right (default) |
+| `'leftabove vnew'` | Open on the left |
+| `'botright split'` | Open at the bottom |
+| `'topleft split'` | Open at the top |
+| `'tabnew'` | Open in a new tab |
+
+You can use any valid Neovim window split command.
+
+### Auto-reload Methods
+
+**fs_watcher (default):**
+- Uses Neovim's file system watcher
+- Detects changes from any editor or external tools
+- More responsive to external changes
 
 ```lua
 require('memd').setup({
-  -- Display mode: 'float' or 'split'
-  display_mode = 'float',
+  auto_reload_method = 'fs_watcher',
+})
+```
 
-  -- Auto-preview on save/cursor hold
-  auto_preview = false,
+**autocmd:**
+- Uses Neovim's BufWritePost autocmd
+- Only detects saves within Neovim
+- More predictable, less system overhead
 
-  -- Terminal width override (nil = auto-detect)
-  width = nil,
-
-  -- Use pure ASCII mode for diagrams
-  use_ascii = false,
-
-  -- Floating window options
-  float_opts = {
-    relative = 'editor',
-    border = 'rounded',
-  },
-
-  -- Split window options
-  split_opts = {
-    position = 'right',  -- 'right', 'left', 'above', 'below'
-    size = 80,           -- Width for vertical, height for horizontal
-  },
-
-  -- Cache configuration
-  cache = {
-    enabled = true,
-  },
-
-  -- Debounce time for auto-preview (ms)
-  debounce_ms = 500,
-
-  -- Keymaps (set to false to disable)
-  keymaps = {
-    preview = '<leader>mp',
-    toggle = '<leader>mt',
-    clear_cache = '<leader>mc',
-  },
+```lua
+require('memd').setup({
+  auto_reload_method = 'autocmd',
 })
 ```
 
@@ -106,125 +162,32 @@ require('memd').setup({
 
 ### Commands
 
-- `:MemdPreview` - Preview current buffer
-- `:MemdPreviewSelection` - Preview visual selection
-- `:MemdToggle` - Toggle auto-preview mode
-- `:MemdClose` - Close preview windows
-- `:MemdClearCache` - Clear render cache
-- `:MemdCacheStats` - Show cache statistics
+- `:Memd` - Open interactive terminal preview with memd-cli
+- `:MemdToggle` - Toggle terminal preview (open if closed, close if open)
+- `:MemdClose` - Close terminal preview
 
-### Keymaps (default)
+### Keymaps
 
-- `<leader>mp` - Preview (normal mode: buffer, visual mode: selection)
-- `<leader>mt` - Toggle auto-preview
-- `<leader>mc` - Clear cache
-
-### Example Workflow
-
-1. Open a markdown file with Mermaid diagrams
-2. Press `<leader>mp` to preview
-3. The rendered diagram appears in a floating window
-4. Press `q` or `<Esc>` to close the preview
-5. Enable auto-preview with `<leader>mt` for live updates
-
-## Display Modes
-
-### Floating Window (default)
-
-Displays the preview in a centered floating window. Press `q` or `<Esc>` to close.
+No default keymaps are provided. Set up your own keymaps:
 
 ```lua
-require('memd').setup({
-  display_mode = 'float',
-})
-```
+-- Toggle preview
+vim.keymap.set('n', '<leader>mt', require('memd').toggle, { desc = 'Memd: Toggle preview' })
 
-### Split Window
+-- Open preview
+vim.keymap.set('n', '<leader>mo', require('memd').open_terminal, { desc = 'Memd: Open preview' })
 
-Displays the preview in a persistent split window that updates with new previews.
-
-```lua
-require('memd').setup({
-  display_mode = 'split',
-  split_opts = {
-    position = 'right',  -- Position of the split
-    size = 80,           -- Width in columns
-  },
-})
-```
-
-## Auto-Preview Mode
-
-Enable automatic previews on file save or cursor hold:
-
-```lua
-require('memd').setup({
-  auto_preview = true,  -- Enable by default
-  debounce_ms = 500,    -- Wait time before preview
-})
-```
-
-Or toggle at runtime with `:MemdToggle` or `<leader>mt`.
-
-## Advanced Usage
-
-### Programmatic API
-
-```lua
-local memd = require('memd')
-
--- Preview with custom options
-memd.preview({
-  display_mode = 'float',
-  width = 100,
-  use_ascii = true,
-  no_cache = true,
-})
-
--- Preview selection
-memd.preview_selection()
-
--- Clear cache
-memd.clear_cache()
-
--- Close all previews
-memd.close()
-```
-
-### Custom Keymaps
-
-Disable default keymaps and set your own:
-
-```lua
-require('memd').setup({
-  keymaps = false,  -- Disable defaults
-})
-
--- Set custom keymaps
-vim.keymap.set('n', '<C-p>', require('memd').preview)
-vim.keymap.set('v', '<C-p>', require('memd').preview_selection)
+-- Close preview
+vim.keymap.set('n', '<leader>mc', require('memd').close_terminal, { desc = 'Memd: Close preview' })
 ```
 
 ## Troubleshooting
 
-### Command not found
+### Auto-reload not working
 
-If you see "memd command not found", ensure memd-cli is installed:
-
-```bash
-npm install -g memd-cli
-which memd  # Should show the path
-```
-
-### Display issues
-
-For better diagram display, ensure your terminal supports Unicode. If you experience issues, try ASCII mode:
-
-```lua
-require('memd').setup({
-  use_ascii = true,
-})
-```
+Auto-reload uses fs_watcher to detect file changes. Ensure:
+- Your file has the `.md` extension
+- The file is being saved to disk (not just the buffer)
 
 ## License
 
@@ -233,4 +196,3 @@ MIT
 ## Related Projects
 
 - [memd-cli](https://github.com/ktrysmt/memd) - CLI tool for rendering Mermaid diagrams
-- [markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim) - Markdown preview in browser

@@ -1,45 +1,28 @@
 local M = {}
 
 M.defaults = {
-  -- Display mode: 'float', 'split', or 'replace'
-  display_mode = 'float',
+  -- Display mode: 'split' or 'floating'
+  display_mode = 'split',
 
-  -- Automatically preview on save
-  auto_preview = false,
+  -- Terminal split command for opening memd-cli (used when display_mode = 'split')
+  terminal_split = 'rightbelow vnew',
 
-  -- Terminal width override (nil = auto-detect)
-  width = nil,
-
-  -- Use pure ASCII mode for diagrams
-  use_ascii = false,
-
-  -- Floating window configuration
-  float_opts = {
+  -- Floating window options (used when display_mode = 'floating')
+  floating_opts = {
     relative = 'editor',
+    width = 0.8,
+    height = 0.8,
+    row = 0.1,
+    col = 0.1,
     border = 'rounded',
-    -- Width/height will be calculated dynamically
+    title = ' Memd Preview ',
+    title_pos = 'center',
   },
 
-  -- Split window configuration
-  split_opts = {
-    position = 'right', -- 'right', 'left', 'above', 'below'
-    size = 80,          -- Width for vertical, height for horizontal
-  },
-
-  -- Cache configuration
-  cache = {
-    enabled = true,
-  },
-
-  -- Debounce time for auto-preview (ms)
-  debounce_ms = 500,
-
-  -- Keymaps (set to false to disable default keymaps)
-  keymaps = {
-    preview = '<leader>mp',
-    toggle = '<leader>mt',
-    clear_cache = '<leader>mc',
-  },
+  -- Auto-reload method: 'fs_watcher' or 'autocmd'
+  -- fs_watcher: detects changes from any editor (default)
+  -- autocmd: only detects saves from within Neovim
+  auto_reload_method = 'fs_watcher',
 }
 
 M.options = {}

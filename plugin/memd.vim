@@ -8,9 +8,6 @@ endif
 let g:loaded_memd = 1
 
 " Commands
-command! -nargs=0 MemdPreview lua require('memd').preview()
-command! -nargs=0 MemdPreviewSelection lua require('memd').preview_selection()
-command! -nargs=0 MemdToggle lua require('memd').toggle_auto_preview()
-command! -nargs=0 MemdClose lua require('memd').close()
-command! -nargs=0 MemdClearCache lua require('memd').clear_cache()
-command! -nargs=0 MemdCacheStats lua require('memd').cache_stats()
+command! -nargs=0 Memd lua require('memd').open_terminal()
+command! -nargs=0 MemdToggle lua require('memd').toggle()
+command! -nargs=0 MemdClose lua require('memd').close_terminal()
