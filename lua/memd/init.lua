@@ -50,28 +50,28 @@ function M.open_terminal(opts)
   if display_mode == 'floating' then
     -- Create floating window
     local floating_opts = vim.tbl_deep_extend('force', config.options.floating_opts or {}, opts.floating_opts or {})
-    
+
     -- Calculate window size
     local width = floating_opts.width
     local height = floating_opts.height
-    
+
     if type(width) == 'number' and width > 0 and width <= 1 then
       width = math.floor(vim.o.columns * width)
     end
     if type(height) == 'number' and height > 0 and height <= 1 then
       height = math.floor(vim.o.lines * height)
     end
-    
+
     local row = floating_opts.row
     local col = floating_opts.col
-    
+
     if type(row) == 'number' and row > 0 and row <= 1 then
       row = math.floor(vim.o.lines * row)
     end
     if type(col) == 'number' and col > 0 and col <= 1 then
       col = math.floor(vim.o.columns * col)
     end
-    
+
     win = vim.api.nvim_open_win(bufnr, false, {
       relative = floating_opts.relative or 'editor',
       width = width,
@@ -109,7 +109,7 @@ function M.open_terminal(opts)
 
   -- Setup auto-reload based on method
   local auto_reload_method = config.options.auto_reload_method or 'fs_watcher'
-  
+
   if auto_reload_method == 'fs_watcher' then
     -- Stop existing fs_watcher if any
     if terminal_state.fs_watcher then
@@ -162,9 +162,6 @@ function M.open_terminal(opts)
     terminal_state.saved_width = vim.api.nvim_win_get_width(win)
     terminal_state.saved_height = vim.api.nvim_win_get_height(win)
   end
-
-  -- Go back to previous window
-  vim.cmd('wincmd p')
 end
 
 -- Close terminal
