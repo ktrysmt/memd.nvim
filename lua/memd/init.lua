@@ -162,6 +162,10 @@ function M.open_terminal(opts)
     terminal_state.saved_width = vim.api.nvim_win_get_width(win)
     terminal_state.saved_height = vim.api.nvim_win_get_height(win)
   end
+
+  -- Focus terminal window and enter Insert mode
+  vim.api.nvim_set_current_win(win)
+  vim.cmd('startinsert')
 end
 
 -- Close terminal
