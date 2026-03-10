@@ -23,6 +23,16 @@ M.defaults = {
   -- fs_watcher: detects changes from any editor (default)
   -- autocmd: only detects saves from within Neovim
   auto_reload_method = 'fs_watcher',
+
+  -- memd CLI arguments (v1.5.1+)
+  memd_args = {
+    no_pager = false,      -- disable pager (less)
+    no_mouse = false,      -- disable mouse scroll in pager
+    no_color = false,      -- disable colored output
+    width = nil,           -- terminal width override; nil = not set, 'auto' = match window width
+    ascii = false,         -- use pure ASCII mode for diagrams (default: unicode)
+    theme = nil,           -- syntax highlight theme: 'default','monokai','dracula','github-dark','solarized','nord'
+  },
 }
 
 M.options = {}

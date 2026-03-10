@@ -89,6 +89,16 @@ export PATH="$HOME/.local/bin:$PATH"
       -- fs_watcher: detects file changes from any editor (default)
       -- autocmd: only detects saves from within Neovim (BufWritePost)
       auto_reload_method = 'fs_watcher',
+
+      -- memd CLI arguments (v1.5.1+)
+      memd_args = {
+        no_pager = false,      -- disable pager (less)
+        no_mouse = false,      -- disable mouse scroll in pager
+        no_color = false,      -- disable colored output
+        width = nil,           -- terminal width override; nil = not set, 'auto' = match window width
+        ascii = false,         -- use pure ASCII mode for diagrams (default: unicode)
+        theme = nil,           -- syntax highlight theme: 'default','monokai','dracula','github-dark','solarized','nord'
+      },
     })
 
     -- Set up keymaps (optional)
@@ -158,6 +168,32 @@ require('memd').setup({
   auto_reload_method = 'autocmd',
 })
 ```
+
+### memd CLI Arguments (v1.5.1+)
+
+Pass options directly to the memd CLI via `memd_args`:
+
+```lua
+require('memd').setup({
+  memd_args = {
+    no_pager = true,       -- disable pager (less); recommended true inside Neovim
+    no_mouse = false,      -- disable mouse scroll in pager
+    no_color = false,      -- disable colored output
+    width = nil,           -- terminal width override; nil = not set, 'auto' = match window width
+    ascii = false,         -- use pure ASCII mode for diagrams (default: unicode)
+    theme = nil,           -- syntax highlight theme
+  },
+})
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `no_pager` | boolean | `false` | Disable pager (less) |
+| `no_mouse` | boolean | `false` | Disable mouse scroll in pager |
+| `no_color` | boolean | `false` | Disable colored output and syntax highlighting |
+| `width` | number/string/nil | `nil` | Terminal width override. `nil` = not set, `'auto'` = match preview window width |
+| `ascii` | boolean | `false` | Use pure ASCII mode for diagrams instead of Unicode |
+| `theme` | string/nil | `nil` | Syntax highlight theme: `'default'`, `'monokai'`, `'dracula'`, `'github-dark'`, `'solarized'`, `'nord'` |
 
 ## Usage
 

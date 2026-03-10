@@ -3,6 +3,40 @@ local utils = require('memd.utils')
 
 local M = {}
 
+-- Build memd CLI command with configured arguments
+local function build_memd_cmd(filepath, win)
+  local args = { 'memd' }
+  local memd_args = config.options.memd_args or {}
+
+  if memd_args.no_pager then
+    table.insert(args, '--no-pager')
+  end
+  if memd_args.no_mouse then
+    table.insert(args, '--no-mouse')
+  end
+  if memd_args.no_color then
+    table.insert(args, '--no-color')
+  end
+  if memd_args.width == 'auto' and win and vim.api.nvim_win_is_valid(win) then
+    local win_width = vim.api.nvim_win_get_width(win)
+    table.insert(args, '--width')
+    table.insert(args, tostring(win_width))
+  elseif type(memd_args.width) == 'number' then
+    table.insert(args, '--width')
+    table.insert(args, tostring(memd_args.width))
+  end
+  if memd_args.ascii then
+    table.insert(args, '--ascii')
+  end
+  if memd_args.theme then
+    table.insert(args, '--theme')
+    table.insert(args, memd_args.theme)
+  end
+
+  table.insert(args, vim.fn.shellescape(filepath))
+  return table.concat(args, ' ')
+end
+
 -- Terminal state for interactive preview
 local terminal_state = {
   bufnr = nil,
@@ -93,7 +127,7 @@ function M.open_terminal(opts)
 
   -- Open terminal with memd-cli
   local file_dir = vim.fn.fnamemodify(filepath, ':h')
-  local memd_cmd = string.format('cd %s && memd %s', vim.fn.shellescape(file_dir), vim.fn.shellescape(filepath))
+  local memd_cmd = string.format('cd %s && %s', vim.fn.shellescape(file_dir), build_memd_cmd(filepath, win))
 
   terminal_state.bufnr = bufnr
   terminal_state.win = win

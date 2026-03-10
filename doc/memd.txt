@@ -76,6 +76,14 @@ Default configuration:
       title_pos = 'center',
     },
     auto_reload_method = 'fs_watcher',
+    memd_args = {
+      no_pager = false,
+      no_mouse = false,
+      no_color = false,
+      width = nil,
+      ascii = false,
+      theme = nil,
+    },
   })
 <
 
@@ -125,6 +133,38 @@ auto_reload_method                          *memd-config-auto_reload_method*
   Values:
     - 'fs_watcher': Uses file system watcher, detects external changes
     - 'autocmd': Uses BufWritePost, only detects Neovim saves
+
+memd_args                                              *memd-config-memd_args*
+  Type: table
+  Default: See below
+  Arguments passed to the memd CLI (v1.5.1+).
+
+  Default values:
+    no_pager = false         disable pager (less)
+    no_mouse = false         disable mouse scroll in pager
+    no_color = false         disable colored output and syntax highlighting
+    width = nil              terminal width override; nil or 'auto'
+    ascii = false            use pure ASCII mode for diagrams
+    theme = nil              syntax highlight theme
+
+  Available themes:
+    'default', 'monokai', 'dracula', 'github-dark', 'solarized', 'nord'
+
+  The `width` option accepts:
+    - nil: do not override terminal width
+    - number: fixed width in columns
+    - 'auto': automatically match the preview window width
+
+  Example:
+>lua
+    require('memd').setup({
+      memd_args = {
+        theme = 'dracula',
+        ascii = true,
+        width = 'auto',
+      },
+    })
+<
 
 ==============================================================================
 USAGE                                                            *memd-usage*
