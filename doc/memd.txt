@@ -137,7 +137,7 @@ auto_reload_method                          *memd-config-auto_reload_method*
 memd_args                                              *memd-config-memd_args*
   Type: table
   Default: See below
-  Arguments passed to the memd CLI (v1.5.1+).
+  Arguments passed to the memd CLI.
 
   Default values:
     no_pager = false         disable pager (less)
@@ -145,10 +145,13 @@ memd_args                                              *memd-config-memd_args*
     no_color = false         disable colored output and syntax highlighting
     width = nil              terminal width override; nil or 'auto'
     ascii = false            use pure ASCII mode for diagrams
-    theme = nil              syntax highlight theme
+    theme = nil              color theme (also sets MEMD_THEME env var for v2.1.0+)
 
   Available themes:
-    'default', 'monokai', 'dracula', 'github-dark', 'solarized', 'nord'
+    'nord', 'dracula', 'one-dark', 'github-dark', 'github-light',
+    'solarized-dark', 'solarized-light', 'catppuccin-mocha', 'catppuccin-latte',
+    'tokyo-night', 'tokyo-night-storm', 'tokyo-night-light',
+    'nord-light', 'zinc-dark', 'zinc-light'
 
   The `width` option accepts:
     - nil: do not override terminal width

@@ -33,7 +33,8 @@ local function build_memd_cmd(filepath, win)
     table.insert(args, memd_args.theme)
   end
 
-  table.insert(args, vim.fn.shellescape(filepath))
+  -- Use filename only (relative to cwd) to avoid memd v2's path traversal restriction
+  table.insert(args, vim.fn.shellescape(vim.fn.fnamemodify(filepath, ':t')))
   return table.concat(args, ' ')
 end
 
@@ -127,13 +128,20 @@ function M.open_terminal(opts)
 
   -- Open terminal with memd-cli
   local file_dir = vim.fn.fnamemodify(filepath, ':h')
-  local memd_cmd = string.format('cd %s && %s', vim.fn.shellescape(file_dir), build_memd_cmd(filepath, win))
+  local memd_cmd = build_memd_cmd(filepath, win)
 
   terminal_state.bufnr = bufnr
   terminal_state.win = win
-  terminal_state.job_id = vim.fn.termopen(memd_cmd, {
-    cwd = file_dir
-  })
+
+  local term_opts = { cwd = file_dir }
+
+  -- Set MEMD_THEME env var if theme is configured (memd v2.1.0+)
+  local memd_args = config.options.memd_args or {}
+  if memd_args.theme then
+    term_opts.env = { MEMD_THEME = memd_args.theme }
+  end
+
+  terminal_state.job_id = vim.fn.termopen(memd_cmd, term_opts)
 
   -- Restore saved window size if available
   if terminal_state.saved_width and terminal_state.saved_height then

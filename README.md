@@ -90,14 +90,14 @@ export PATH="$HOME/.local/bin:$PATH"
       -- autocmd: only detects saves from within Neovim (BufWritePost)
       auto_reload_method = 'fs_watcher',
 
-      -- memd CLI arguments (v1.5.1+)
+      -- memd CLI arguments
       memd_args = {
         no_pager = false,      -- disable pager (less)
         no_mouse = false,      -- disable mouse scroll in pager
         no_color = false,      -- disable colored output
         width = nil,           -- terminal width override; nil = not set, 'auto' = match window width
         ascii = false,         -- use pure ASCII mode for diagrams (default: unicode)
-        theme = nil,           -- syntax highlight theme: 'default','monokai','dracula','github-dark','solarized','nord'
+        theme = nil,           -- color theme (also sets MEMD_THEME env var for v2.1.0+)
       },
     })
 
@@ -169,7 +169,7 @@ require('memd').setup({
 })
 ```
 
-### memd CLI Arguments (v1.5.1+)
+### memd CLI Arguments
 
 Pass options directly to the memd CLI via `memd_args`:
 
@@ -181,7 +181,7 @@ require('memd').setup({
     no_color = false,      -- disable colored output
     width = nil,           -- terminal width override; nil = not set, 'auto' = match window width
     ascii = false,         -- use pure ASCII mode for diagrams (default: unicode)
-    theme = nil,           -- syntax highlight theme
+    theme = nil,           -- color theme (also sets MEMD_THEME env var for v2.1.0+)
   },
 })
 ```
@@ -193,7 +193,7 @@ require('memd').setup({
 | `no_color` | boolean | `false` | Disable colored output and syntax highlighting |
 | `width` | number/string/nil | `nil` | Terminal width override. `nil` = not set, `'auto'` = match preview window width |
 | `ascii` | boolean | `false` | Use pure ASCII mode for diagrams instead of Unicode |
-| `theme` | string/nil | `nil` | Syntax highlight theme: `'default'`, `'monokai'`, `'dracula'`, `'github-dark'`, `'solarized'`, `'nord'` |
+| `theme` | string/nil | `nil` | Color theme. Also sets `MEMD_THEME` env var (v2.1.0+). Available themes: `'nord'`, `'dracula'`, `'one-dark'`, `'github-dark'`, `'github-light'`, `'solarized-dark'`, `'solarized-light'`, `'catppuccin-mocha'`, `'catppuccin-latte'`, `'tokyo-night'`, `'tokyo-night-storm'`, `'tokyo-night-light'`, `'nord-light'`, `'zinc-dark'`, `'zinc-light'` |
 
 ## Usage
 
