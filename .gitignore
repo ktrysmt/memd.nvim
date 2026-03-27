@@ -9,3 +9,6 @@
 # Editor directories
 .vscode/
 .idea/
+
+# Test temp files
+tests/e2e/tmp_*

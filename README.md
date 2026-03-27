@@ -235,6 +235,26 @@ Auto-reload uses fs_watcher to detect file changes. Ensure:
 - Your file has the `.md` extension
 - The file is being saved to disk (not just the buffer)
 
+## Testing
+
+### E2E Tests
+
+E2E tests use [tuistory](https://www.npmjs.com/package/tuistory) to drive Neovim in a virtual terminal.
+
+Prerequisites:
+
+- Node.js (for `npx tuistory`)
+- `nvim`
+- `memd` (memd-cli)
+
+Run:
+
+```bash
+bash tests/e2e/run.sh
+```
+
+Tests launch Neovim with a minimal config (`tests/e2e/minimal_init.lua`) and verify plugin behavior via terminal snapshots. Temporary files created during tests are prefixed with `tmp_` and gitignored.
+
 ## License
 
 MIT
