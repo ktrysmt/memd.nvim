@@ -166,7 +166,7 @@ function M.open_terminal(opts)
       end
       -- Reload terminal on file change
       if terminal_state.win and vim.api.nvim_win_is_valid(terminal_state.win) then
-        M.open_terminal()
+        M.open_terminal({ focus = config.options.auto_reload_focus })
       end
     end))
 
@@ -205,9 +205,11 @@ function M.open_terminal(opts)
     terminal_state.saved_height = vim.api.nvim_win_get_height(win)
   end
 
-  -- Focus terminal window and enter Insert mode
-  vim.api.nvim_set_current_win(win)
-  vim.cmd('startinsert')
+  -- Focus terminal window and enter Insert mode (skip on auto-reload)
+  if opts.focus ~= false then
+    vim.api.nvim_set_current_win(win)
+    vim.cmd('startinsert')
+  end
 end
 
 -- Close terminal
@@ -250,7 +252,7 @@ end
 function M.reopen_terminal()
   -- Only reload if terminal window is open
   if terminal_state.win and vim.api.nvim_win_is_valid(terminal_state.win) then
-    M.open_terminal()
+    M.open_terminal({ focus = config.options.auto_reload_focus })
   end
 end
 

@@ -24,6 +24,9 @@ M.defaults = {
   -- autocmd: only detects saves from within Neovim
   auto_reload_method = 'fs_watcher',
 
+  -- Whether to focus the terminal window on auto-reload
+  auto_reload_focus = false,
+
   -- memd CLI arguments
   memd_args = {
     no_pager = false,      -- disable pager (less)
