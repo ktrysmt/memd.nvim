@@ -8,7 +8,7 @@ COLS=160
 ROWS=40
 TIMEOUT=10000
 
-TUISTORY="npx tuistory"
+TUISTORY="${PROJECT_ROOT}/node_modules/.bin/tuistory"
 
 PASSED=0
 FAILED=0
@@ -77,9 +77,10 @@ switch_to_editor() {
 }
 
 # Prerequisites
-for cmd in nvim memd npx; do
+for cmd in nvim memd; do
   command -v "$cmd" >/dev/null 2>&1 || { echo "$cmd not found"; exit 1; }
 done
+[ -x "$TUISTORY" ] || { echo "tuistory not found. Run 'npm install' first."; exit 1; }
 
 echo -e "${BOLD}=== memd.nvim E2E Tests ===${NC}"
 echo ""

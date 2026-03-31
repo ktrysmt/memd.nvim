@@ -10,5 +10,8 @@
 .vscode/
 .idea/
 
+# Node
+node_modules/
+
 # Test temp files
 tests/e2e/tmp_*

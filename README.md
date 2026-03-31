@@ -243,7 +243,7 @@ E2E tests use [tuistory](https://www.npmjs.com/package/tuistory) to drive Neovim
 
 Prerequisites:
 
-- Node.js (for `npx tuistory`)
+- Node.js + `npm install` (tuistory をローカルインストール)
 - `nvim`
 - `memd` (memd-cli)
 

@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "devDependencies": {
+    "tuistory": "^0.0.16"
+  }
+}
