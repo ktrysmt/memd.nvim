@@ -80,7 +80,7 @@ switch_to_editor() {
 for cmd in nvim memd; do
   command -v "$cmd" >/dev/null 2>&1 || { echo "$cmd not found"; exit 1; }
 done
-[ -x "$TUISTORY" ] || { echo "tuistory not found. Run 'npm install' first."; exit 1; }
+[ -x "$TUISTORY" ] || { echo "tuistory not found. Run 'pnpm install' first."; exit 1; }
 
 echo -e "${BOLD}=== memd.nvim E2E Tests ===${NC}"
 echo ""
